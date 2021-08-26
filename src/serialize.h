@@ -290,23 +290,30 @@ uint64_t ReadCompactSize(Stream& is, bool range_check = true)
     else if (chSize == 253)
     {
         nSizeRet = ser_readdata16(is);
-        if (nSizeRet < 253)
-            throw std::ios_base::failure("non-canonical ReadCompactSize()");
+        if (nSizeRet < 253) {
+            std::out << "non-canonical ReadCompactSize()" << endl;
+            exit(1);
+        }
     }
     else if (chSize == 254)
     {
         nSizeRet = ser_readdata32(is);
-        if (nSizeRet < 0x10000u)
-            throw std::ios_base::failure("non-canonical ReadCompactSize()");
+        if (nSizeRet < 0x10000u) {
+            std::out << "non-canonical ReadCompactSize()" << endl;
+            exit(1);
+        }
     }
     else
     {
         nSizeRet = ser_readdata64(is);
-        if (nSizeRet < 0x100000000ULL)
-            throw std::ios_base::failure("non-canonical ReadCompactSize()");
+        if (nSizeRet < 0x100000000ULL) {
+            std::out << "non-canonical ReadCompactSize()" << endl;
+            exit(1);
+        }
     }
     if (range_check && nSizeRet > MAX_SIZE) {
-        throw std::ios_base::failure("ReadCompactSize(): size too large");
+        std::out << "ReadCompactSize(): size too large" << endl;
+        exit(1);
     }
     return nSizeRet;
 }
@@ -399,12 +406,14 @@ I ReadVarInt(Stream& is)
     while(true) {
         unsigned char chData = ser_readdata8(is);
         if (n > (std::numeric_limits<I>::max() >> 7)) {
-           throw std::ios_base::failure("ReadVarInt(): size too large");
+            std::out << "ReadVarInt(): size too large" << endl;
+            exit(1);
         }
         n = (n << 7) | (chData & 0x7F);
         if (chData & 0x80) {
             if (n == std::numeric_limits<I>::max()) {
-                throw std::ios_base::failure("ReadVarInt(): size too large");
+                std::out << "ReadVarInt(): size too large" << endl;
+                exit(1);
             }
             n++;
         } else {
@@ -476,7 +485,10 @@ struct CustomUintFormatter
 
     template <typename Stream, typename I> void Ser(Stream& s, I v)
     {
-        if (v < 0 || v > MAX) throw std::ios_base::failure("CustomUintFormatter value out of range");
+        if (v < 0 || v > MAX) {
+            std::out << "CustomUintFormatter value out of range" << endl;
+            exit(1);
+        };
         if (BigEndian) {
             uint64_t raw = htobe64(v);
             s.write(((const char*)&raw) + 8 - Bytes, Bytes);
@@ -512,7 +524,8 @@ struct CompactSizeFormatter
     {
         uint64_t n = ReadCompactSize<Stream>(s, RangeCheck);
         if (n < std::numeric_limits<I>::min() || n > std::numeric_limits<I>::max()) {
-            throw std::ios_base::failure("CompactSize exceeds limit of type");
+            std::out << "CompactSize exceeds limit of type" << endl;
+            exit(1);
         }
         v = n;
     }
@@ -535,7 +548,8 @@ struct LimitedStringFormatter
     {
         size_t size = ReadCompactSize(s);
         if (size > Limit) {
-            throw std::ios_base::failure("String length limit exceeded");
+            std::out << "String length limit exceeded" << endl;
+            exit(1);
         }
         v.resize(size);
         if (size != 0) s.read((char*)v.data(), size);
