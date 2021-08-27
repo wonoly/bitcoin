@@ -291,7 +291,7 @@ uint64_t ReadCompactSize(Stream& is, bool range_check = true)
     {
         nSizeRet = ser_readdata16(is);
         if (nSizeRet < 253) {
-            std::out << "non-canonical ReadCompactSize()" << endl;
+            std::out << "non-canonical ReadCompactSize()" << std::endl;
             exit(1);
         }
     }
@@ -299,7 +299,7 @@ uint64_t ReadCompactSize(Stream& is, bool range_check = true)
     {
         nSizeRet = ser_readdata32(is);
         if (nSizeRet < 0x10000u) {
-            std::out << "non-canonical ReadCompactSize()" << endl;
+            std::out << "non-canonical ReadCompactSize()" << std::endl;
             exit(1);
         }
     }
@@ -307,12 +307,12 @@ uint64_t ReadCompactSize(Stream& is, bool range_check = true)
     {
         nSizeRet = ser_readdata64(is);
         if (nSizeRet < 0x100000000ULL) {
-            std::out << "non-canonical ReadCompactSize()" << endl;
+            std::out << "non-canonical ReadCompactSize()" << std::endl;
             exit(1);
         }
     }
     if (range_check && nSizeRet > MAX_SIZE) {
-        std::out << "ReadCompactSize(): size too large" << endl;
+        std::out << "ReadCompactSize(): size too large" << std::endl;
         exit(1);
     }
     return nSizeRet;
@@ -406,13 +406,13 @@ I ReadVarInt(Stream& is)
     while(true) {
         unsigned char chData = ser_readdata8(is);
         if (n > (std::numeric_limits<I>::max() >> 7)) {
-            std::out << "ReadVarInt(): size too large" << endl;
+            std::out << "ReadVarInt(): size too large" << std::endl;
             exit(1);
         }
         n = (n << 7) | (chData & 0x7F);
         if (chData & 0x80) {
             if (n == std::numeric_limits<I>::max()) {
-                std::out << "ReadVarInt(): size too large" << endl;
+                std::out << "ReadVarInt(): size too large" << std::endl;
                 exit(1);
             }
             n++;
@@ -486,7 +486,7 @@ struct CustomUintFormatter
     template <typename Stream, typename I> void Ser(Stream& s, I v)
     {
         if (v < 0 || v > MAX) {
-            std::out << "CustomUintFormatter value out of range" << endl;
+            std::out << "CustomUintFormatter value out of range" << std::endl;
             exit(1);
         };
         if (BigEndian) {
@@ -524,7 +524,7 @@ struct CompactSizeFormatter
     {
         uint64_t n = ReadCompactSize<Stream>(s, RangeCheck);
         if (n < std::numeric_limits<I>::min() || n > std::numeric_limits<I>::max()) {
-            std::out << "CompactSize exceeds limit of type" << endl;
+            std::out << "CompactSize exceeds limit of type" << std::endl;
             exit(1);
         }
         v = n;
@@ -548,7 +548,7 @@ struct LimitedStringFormatter
     {
         size_t size = ReadCompactSize(s);
         if (size > Limit) {
-            std::out << "String length limit exceeded" << endl;
+            std::out << "String length limit exceeded" << std::endl;
             exit(1);
         }
         v.resize(size);
