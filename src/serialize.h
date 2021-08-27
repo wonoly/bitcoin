@@ -20,6 +20,7 @@
 #include <string.h>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 #include <prevector.h>
 #include <span.h>
