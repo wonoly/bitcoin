@@ -11,8 +11,22 @@
 
 #include <assert.h>
 #include <string.h>
-
+#include <iterator>
 #include <limits>
+
+#include <array>
+#include <deque>
+#include <forward_list>
+#include <list>
+#include <map>
+#include <regex>
+#include <set>
+#include <string>
+#include <string_view>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
 
 /** All alphanumeric characters except for "0", "I", "O", and "l" */
 static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
